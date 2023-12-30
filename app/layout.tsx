@@ -3,6 +3,8 @@ import Provider from '@components/Provider';
 import '@styles/globals.css';
 import { ReactNode } from 'react'
 
+export const fetchCache = 'force-no-store';
+
 export const metadata = {
   title: 'Promptopia',
   description: 'Discover & Share AI prompts'
