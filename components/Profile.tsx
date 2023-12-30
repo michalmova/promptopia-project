@@ -3,8 +3,8 @@ interface Props {
   name: string,
   desc: string,
   data: Array<any>,
-  handleEdit: any,
-  handleDelete: any
+  handleEdit?: any,
+  handleDelete?: any
 }
 
 const Profile = ({ name, desc, data, handleEdit, handleDelete }: Props) => {
