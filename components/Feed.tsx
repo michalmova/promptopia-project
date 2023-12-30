@@ -6,16 +6,47 @@ import PromptCard from "./PromptCard"
 const Feed = () => {
   const [searchText, setSearchText] = useState('')
   const [posts, setPosts] = useState([])
+  const [allPosts, setAllPosts] = useState([])
+  let currentTimeOutId: any = null
+  const delay: number = 750
+
+  const filterPosts = (searchText: string) => {
+    const lowerSearchText = searchText.toLowerCase()
+    const filteredPosts = allPosts.filter((post: any) => {
+      const isContain = post.creator.username.toLowerCase().includes(lowerSearchText)
+        || post.prompt.toLowerCase().includes(lowerSearchText)
+        || post.tag.toLowerCase().includes(lowerSearchText)
+
+      return isContain
+    })
+    return filteredPosts
+  }
 
   const handleSearchChange = (e: any) => {
-    setSearchText(e.target.value)
+    const newSearchText = e.target.value
+    setSearchText(newSearchText)
+
+    if (currentTimeOutId) clearTimeout(currentTimeOutId)
+
+    currentTimeOutId = setTimeout(() => {
+      const filteredPosts = filterPosts(newSearchText)
+      setPosts(filteredPosts)
+    }, delay)
+
+  }
+
+  const handleTagClick = (tag: any) => {
+    setSearchText(tag)
+    const filteredPosts = filterPosts(tag)
+    setPosts(filteredPosts)
   }
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const response = await fetch('/api/prompt', { cache: 'no-store' })
+      const response = await fetch('/api/prompt')
       const data = await response.json()
       setPosts(data)
+      setAllPosts(data)
     }
 
     fetchPosts()
@@ -54,7 +85,7 @@ const Feed = () => {
           className="search_input peer"
         />
       </form>
-      <PromptCardList data={posts} handleTagClick={() => { }} />
+      <PromptCardList data={posts} handleTagClick={handleTagClick} />
     </section>
   )
 }
